@@ -9,18 +9,22 @@ import UpdateBusinessEntityDto from '../../typings/dto/update-business-entity.dt
 export default class BusinessEntityController {
   @Get(':id/emissions/total')
   @ApiResponse(SwaggerResponse.Ok(Number))
+  @ApiResponse(SwaggerResponse.InternalError)
   public async getTotalEmissions(@Param('id') id: number): Promise<number> {
     return id;
   }
 
   @Get(':id/ancestry/names')
   @ApiResponse(SwaggerResponse.Ok([String]))
+  @ApiResponse(SwaggerResponse.InternalError)
   public async getAncestryNames(@Param('id') id: number): Promise<string[]> {
     return [`${id}`, `${id}`];
   }
 
   @Post()
   @ApiResponse(SwaggerResponse.Created(Number))
+  @ApiResponse(SwaggerResponse.InputValidationError)
+  @ApiResponse(SwaggerResponse.InternalError)
   public async create(
     @Body() businessEntityDto: CreateBusinessEntityDto,
   ): Promise<number> {
@@ -28,7 +32,9 @@ export default class BusinessEntityController {
   }
 
   @Patch(':id')
-  @ApiResponse(SwaggerResponse.Created(Number))
+  @ApiResponse(SwaggerResponse.Ok(Number))
+  @ApiResponse(SwaggerResponse.InputValidationError)
+  @ApiResponse(SwaggerResponse.InternalError)
   public async update(
     @Param('id') id: number,
     @Body() updateBusinessEntityDto: UpdateBusinessEntityDto,
