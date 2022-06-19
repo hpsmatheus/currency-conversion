@@ -3,15 +3,18 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SwaggerResponse } from '../../core/swagger-response';
 import CreateBusinessEntityDto from '../../typings/dto/create-business-entity.dto';
 import UpdateBusinessEntityDto from '../../typings/dto/update-business-entity.dto';
+import BusinessEntityService from './business-entity.service';
 
 @ApiTags('Business Entity')
 @Controller('business-entity')
 export default class BusinessEntityController {
+  constructor(private readonly businessEntityService: BusinessEntityService) {}
+
   @Get(':id/emissions/total')
   @ApiResponse(SwaggerResponse.Ok(Number))
   @ApiResponse(SwaggerResponse.InternalError)
   public async getTotalEmissions(@Param('id') id: number): Promise<number> {
-    return id;
+    return this.businessEntityService.getTotalEmissions(id);
   }
 
   @Get(':id/ancestry/names')
@@ -28,7 +31,7 @@ export default class BusinessEntityController {
   public async create(
     @Body() businessEntityDto: CreateBusinessEntityDto,
   ): Promise<number> {
-    return businessEntityDto.parentId;
+    return this.businessEntityService.create(businessEntityDto);
   }
 
   @Patch(':id')
