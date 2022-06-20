@@ -8,7 +8,7 @@ const update = `UPDATE "businessEntity" set emissions = $1 where id = $2`;
 
 const getAncestryNames = `SELECT name FROM "businessEntity" where id = ANY(('{' || (SELECT path FROM "businessEntity" where id = $1) || '}')::int[])`;
 
-export const Query = {
+export const Querys = {
   getTotalEmissions,
   getSequenceNextValue,
   create,

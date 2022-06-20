@@ -1,6 +1,6 @@
 import DbService from '../database/db.service';
 import { Injectable } from '@nestjs/common';
-import { Query } from '../../querys/busines-entity.query';
+import { Querys } from '../../querys/busines-entity.query';
 import CreateBusinessEntityDto from '../../typings/dto/create-business-entity.dto';
 import UpdateBusinessEntityDto from '../../typings/dto/update-business-entity.dto';
 
@@ -9,14 +9,18 @@ export default class BusinessEntityService {
   constructor(private readonly dbService: DbService) {}
 
   public async getTotalEmissions(id: number): Promise<number> {
-    return this.dbService.executeSum(Query.getTotalEmissions, [`${id}`]);
+    return this.dbService.executeSum(Querys.getTotalEmissions, [`${id}`]);
   }
 
   public async getAncestryNames(id: number): Promise<string[]> {
-    const result = await this.dbService.executeQuery(Query.getAncestryNames, [
+    const rows = await this.dbService.executeQuery(Querys.getAncestryNames, [
       id,
     ]);
-    return result.map((item) =>
+    return this.buildAncestryNamesArrayFromDbRows(rows);
+  }
+
+  private buildAncestryNamesArrayFromDbRows(rows: []): string[] {
+    return rows.map((item) =>
       Object.values(item).reduce((value) => value),
     ) as string[];
   }
@@ -25,7 +29,7 @@ export default class BusinessEntityService {
     id: number,
     updateBusinessEntityDto: UpdateBusinessEntityDto,
   ): Promise<number> {
-    await this.dbService.executeQuery(Query.update, [
+    await this.dbService.executeQuery(Querys.update, [
       updateBusinessEntityDto.emissions,
       id,
     ]);
@@ -36,7 +40,7 @@ export default class BusinessEntityService {
     businessEntity: CreateBusinessEntityDto,
   ): Promise<number> {
     const newId = await this.getSequenceNextValue();
-    await this.dbService.executeQuery(Query.create, [
+    await this.dbService.executeQuery(Querys.create, [
       newId,
       `${businessEntity.name}`,
       `${businessEntity.parentId}`,
@@ -47,6 +51,6 @@ export default class BusinessEntityService {
   }
 
   private getSequenceNextValue(): Promise<number> {
-    return this.dbService.getSequenceNextValue(Query.getSequenceNextValue);
+    return this.dbService.getSequenceNextValue(Querys.getSequenceNextValue);
   }
 }
