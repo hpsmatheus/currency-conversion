@@ -21,7 +21,7 @@ export default class BusinessEntityController {
   @ApiResponse(SwaggerResponse.Ok([String]))
   @ApiResponse(SwaggerResponse.InternalError)
   public async getAncestryNames(@Param('id') id: number): Promise<string[]> {
-    return [`${id}`, `${id}`];
+    return this.businessEntityService.getAncestryNames(id);
   }
 
   @Post()
@@ -42,6 +42,6 @@ export default class BusinessEntityController {
     @Param('id') id: number,
     @Body() updateBusinessEntityDto: UpdateBusinessEntityDto,
   ): Promise<number> {
-    return updateBusinessEntityDto.emissions;
+    return this.businessEntityService.update(id, updateBusinessEntityDto);
   }
 }
