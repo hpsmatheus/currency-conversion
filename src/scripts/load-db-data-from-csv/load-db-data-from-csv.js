@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const fastcsv = require('fast-csv');
 
@@ -6,11 +7,7 @@ const query = `INSERT INTO "businessEntity" (id, name, path, emissions) VALUES (
 function getDbConnection() {
   const Pool = require('pg').Pool;
   return new Pool({
-    user: 'pgsql',
-    host: 'localhost',
-    database: 'sinai',
-    password: 'pgsql',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
   });
 }
 let stream = fs.createReadStream(`${__dirname}/data.csv`);
