@@ -6,13 +6,7 @@ export default class DbService {
   private db;
 
   constructor() {
-    this.db = new Pool({
-      user: 'pgsql',
-      host: 'localhost',
-      database: 'sinai',
-      password: 'pgsql',
-      port: 5432,
-    });
+    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
     this.db.connect();
   }
 
