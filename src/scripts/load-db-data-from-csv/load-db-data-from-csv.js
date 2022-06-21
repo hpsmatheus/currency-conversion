@@ -1,48 +1,55 @@
 require('dotenv').config();
 const fs = require('fs');
 const fastcsv = require('fast-csv');
+const { Pool } = require('pg');
 
-const query = `INSERT INTO "businessEntity" (id, name, path, emissions) VALUES ($1, $2, $3, $4)`;
-
-function getDbConnection() {
-  const Pool = require('pg').Pool;
-  return new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
-}
 let stream = fs.createReadStream(`${__dirname}/data.csv`);
-console.log('read file');
-let csvData = [];
-console.log('csvData = []');
+let businessEntities = [];
+
 let csvStream = fastcsv
   .parse()
-  .on('data', function (data) {
-    csvData.push(data);
+  .on('data', function (businessEntityRow) {
+    businessEntities.push(businessEntityRow);
   })
   .on('end', function () {
-    csvData.shift();
+    businessEntities.shift();
     const db = getDbConnection();
     db.connect((err, client, done) => {
       if (err) throw err;
       try {
-        csvData.forEach((row) => {
-          const id = Number(row[0]);
-          const name = row[1];
-          const path = row[2];
-          const emissions = row[3] === 'null' ? null : Number(row[3]);
-          row = [id, name, path, emissions];
-          client.query(query, row, (err, res) => {
-            if (err) {
-              console.log('error on row:', row, err.stack);
-            } else {
-              console.log('inserted ' + res.rowCount + ' row:', row);
-            }
-          });
+        businessEntities.forEach((row) => {
+          insertRowOnDataBase(row, client);
         });
       } finally {
         done();
       }
     });
   });
+
+function getDbConnection() {
+  return new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+}
+
+function insertRowOnDataBase(row, client) {
+  const insertQuery = `INSERT INTO "businessEntity" (id, name, path, emissions) VALUES ($1, $2, $3, $4)`;
+  row = typeRowData(row);
+  client.query(insertQuery, row, (err) => {
+    if (err) {
+      console.log('error inserting row:', row, err.stack);
+    } else {
+      console.log('inserted row:', row);
+    }
+  });
+}
+
+function typeRowData(row) {
+  const id = Number(row[0]);
+  const name = row[1];
+  const path = row[2];
+  const emissions = row[3] === 'null' ? null : Number(row[3]);
+  return [id, name, path, emissions];
+}
 
 stream.pipe(csvStream);
