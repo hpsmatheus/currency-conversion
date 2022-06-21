@@ -9,7 +9,7 @@ export default class BusinessEntityService {
   constructor(private readonly dbService: DbService) {}
 
   public async getTotalEmissions(id: number): Promise<number> {
-    return this.dbService.executeSum(Querys.getTotalEmissions, [`${id}`]);
+    return this.dbService.executeSum(Querys.getTotalEmissions, [id]);
   }
 
   public async getAncestryNames(id: number): Promise<string[]> {
@@ -19,7 +19,7 @@ export default class BusinessEntityService {
     return this.buildAncestryNamesArrayFromDbRows(rows);
   }
 
-  private buildAncestryNamesArrayFromDbRows(rows: []): string[] {
+  private buildAncestryNamesArrayFromDbRows(rows: unknown[]): string[] {
     return rows.map((item) =>
       Object.values(item).reduce((value) => value),
     ) as string[];
@@ -42,10 +42,10 @@ export default class BusinessEntityService {
     const newId = await this.getSequenceNextValue();
     await this.dbService.executeQuery(Querys.create, [
       newId,
-      `${businessEntity.name}`,
-      `${businessEntity.parentId}`,
+      businessEntity.name,
+      businessEntity.parentId,
       newId,
-      `${businessEntity.emissions}`,
+      businessEntity.emissions,
     ]);
     return newId;
   }

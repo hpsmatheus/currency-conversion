@@ -16,12 +16,15 @@ export default class DbService {
     this.db.connect();
   }
 
-  public async executeQuery(sql: string, params: unknown[]): Promise<[]> {
+  public async executeQuery(
+    sql: string,
+    params: unknown[],
+  ): Promise<unknown[]> {
     const result = await this.db.query(sql, params);
     return result.rows;
   }
 
-  public async executeSum(sql: string, params: string[]): Promise<number> {
+  public async executeSum(sql: string, params: unknown[]): Promise<number> {
     const result = await this.db.query(sql, params);
     return result.rows[0].sum ?? 0;
   }
