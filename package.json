@@ -32,6 +32,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "eslint-config-airbnb-typescript": "^17.0.0",
+    "fast-csv": "^4.3.6",
     "husky": "^8.0.1",
     "jest-mock-extended": "^2.0.6",
     "pg": "^8.7.3",
