@@ -7,6 +7,12 @@ logs
 *.log
 npm-debug.log*
 
+# csv
+*.csv
+
+#env
+.env
+
 
 # OS
 .DS_Store
