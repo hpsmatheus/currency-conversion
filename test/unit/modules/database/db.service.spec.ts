@@ -36,6 +36,34 @@ describe('DbService', () => {
     ]);
   });
 
+  it('should return the result of a SUM query', async () => {
+    mockPool.query.mockResolvedValueOnce({
+      rows: [{ sum: Constants.anyNumber }],
+    });
+
+    const result = await dbService.executeSum(Constants.anyString, [
+      Constants.anyNumber,
+    ]);
+    expect(result).toStrictEqual(Constants.anyNumber);
+    expect(mockPool.query).toHaveBeenCalledWith(Constants.anyString, [
+      Constants.anyNumber,
+    ]);
+  });
+
+  it('should return 0 if the result of a SUM query is null', async () => {
+    mockPool.query.mockResolvedValueOnce({
+      rows: [{ sum: null }],
+    });
+
+    const result = await dbService.executeSum(Constants.anyString, [
+      Constants.anyNumber,
+    ]);
+    expect(result).toStrictEqual(0);
+    expect(mockPool.query).toHaveBeenCalledWith(Constants.anyString, [
+      Constants.anyNumber,
+    ]);
+  });
+
   it('should return the next value of a given dbSequence', async () => {
     mockPool.query.mockResolvedValueOnce({
       rows: [{ nextval: Constants.anyNumber }],
