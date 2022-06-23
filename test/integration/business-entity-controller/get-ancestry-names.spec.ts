@@ -1,8 +1,8 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import Constants from '../../constants';
 import { Test } from '@nestjs/testing';
 import BusinessEntityModule from '../../../src/modules/business-entity/business-entity.module';
-import { HttpStatus, INestApplication } from '@nestjs/common';
 import AppBuilder from '../../mocks/app.builder';
-import Constants from '../../constants';
 import * as request from 'supertest';
 import { EErrorCode } from '../../../src/core/error/error-code.enum';
 
@@ -13,10 +13,9 @@ const mockPool = {
 jest.mock('pg', () => {
   return { Pool: jest.fn(() => mockPool) };
 });
-
-describe('Get total emissions integration tests', () => {
+describe('Get ancestry names integration tests', () => {
   let app: INestApplication;
-  const baseURL = `/business-entity/${Constants.anyNumber}/emissions/total`;
+  const baseURL = `/business-entity/${Constants.anyNumber}/ancestry/names`;
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [BusinessEntityModule],
@@ -25,13 +24,13 @@ describe('Get total emissions integration tests', () => {
     app = await AppBuilder.build(moduleRef);
   });
 
-  it('should get total emissions with success', async () => {
+  it('should get ancestry names with success', async () => {
     mockPool.query.mockResolvedValueOnce({
-      rows: [{ sum: Constants.anyNumber }],
+      rows: [{ name: Constants.anyString }],
     });
     const result = await request(app.getHttpServer()).get(baseURL);
     expect(result.status).toStrictEqual(HttpStatus.OK);
-    expect(Number(result.text)).toStrictEqual(Constants.anyNumber);
+    expect(result.body).toStrictEqual([Constants.anyString]);
   });
 
   it('should return formatted error if it occurs', async () => {

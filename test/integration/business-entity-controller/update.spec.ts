@@ -1,7 +1,9 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import BusinessEntityModule from '../../../src/modules/business-entity/business-entity.module';
-import { HttpStatus, INestApplication } from '@nestjs/common';
 import AppBuilder from '../../mocks/app.builder';
+import UpdateBusinessEntityDto from '../../../src/typings/dto/update-business-entity.dto';
+import UpdateBusinessEntityDtoBuilder from '../../mocks/update-business-entity.dto.builder';
 import Constants from '../../constants';
 import * as request from 'supertest';
 import { EErrorCode } from '../../../src/core/error/error-code.enum';
@@ -14,22 +16,25 @@ jest.mock('pg', () => {
   return { Pool: jest.fn(() => mockPool) };
 });
 
-describe('Get total emissions integration tests', () => {
+describe('Update Business Entity integration tests', () => {
   let app: INestApplication;
-  const baseURL = `/business-entity/${Constants.anyNumber}/emissions/total`;
+  const baseURL = `/business-entity/${Constants.anyNumber}`;
+  let body: UpdateBusinessEntityDto;
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [BusinessEntityModule],
     }).compile();
 
     app = await AppBuilder.build(moduleRef);
+    body = new UpdateBusinessEntityDtoBuilder().build();
   });
 
-  it('should get total emissions with success', async () => {
+  it('should create new business entity with success', async () => {
     mockPool.query.mockResolvedValueOnce({
-      rows: [{ sum: Constants.anyNumber }],
+      rows: [],
     });
-    const result = await request(app.getHttpServer()).get(baseURL);
+
+    const result = await request(app.getHttpServer()).patch(baseURL).send(body);
     expect(result.status).toStrictEqual(HttpStatus.OK);
     expect(Number(result.text)).toStrictEqual(Constants.anyNumber);
   });
@@ -39,7 +44,7 @@ describe('Get total emissions integration tests', () => {
     mockPool.query.mockImplementationOnce(() => {
       throw new Error(databaseUnavailableMessage);
     });
-    const result = await request(app.getHttpServer()).get(baseURL);
+    const result = await request(app.getHttpServer()).patch(baseURL).send(body);
     expect(result.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(result.body.statusCode).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(result.body.errorCode).toBe(EErrorCode.INTERNAL_SERVER_ERROR);

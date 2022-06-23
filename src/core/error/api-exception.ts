@@ -26,16 +26,11 @@ export default class ApiException extends HttpException {
   }
 
   private static getStatusCodeFrom(error: any): HttpStatus {
-    return (
-      error.response?.data?.statusCode ??
-      error?.response?.status ??
-      error.status ??
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
+    return error.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
   private static getMessageFrom(error: any): string {
-    return error.response?.data?.message ?? error.message ?? 'Unknown error';
+    return error.response?.message ?? error.message ?? 'Unknown error';
   }
 
   private static getDataFrom(error: any): any {
