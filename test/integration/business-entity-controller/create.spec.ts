@@ -2,11 +2,11 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import Constants from '../../constants';
 import { Test } from '@nestjs/testing';
 import BusinessEntityModule from '../../../src/modules/business-entity/business-entity.module';
-import AppBuilder from '../../mocks/app.builder';
 import * as request from 'supertest';
 import CreateBusinessEntityDtoBuilder from '../../mocks/create-business-entity.dto.builder';
 import { EErrorCode } from '../../../src/core/error/error-code.enum';
 import CreateBusinessEntityDto from '../../../src/typings/dto/create-business-entity.dto';
+import AppBuilder from '../../mocks/core/app.builder';
 
 const mockPool = {
   connect: jest.fn(),

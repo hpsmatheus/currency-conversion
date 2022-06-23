@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { HttpStatus, Type } from '@nestjs/common';
 import { ApiResponseOptions } from '@nestjs/swagger';
-import ApiExceptionTyping from '../typings/api-exception.typing.entity';
+import SinaiApiExceptionTyping from '../typings/sinai-api-exception.typing.entity';
 
 function ok(
   type?: Type<unknown> | Function | [Function] | string,
@@ -26,13 +26,13 @@ function created(
 const inputValidationError: ApiResponseOptions = {
   status: HttpStatus.BAD_REQUEST,
   description: 'input validation error',
-  type: ApiExceptionTyping,
+  type: SinaiApiExceptionTyping,
 };
 
 const internalError: ApiResponseOptions = {
   status: HttpStatus.INTERNAL_SERVER_ERROR,
   description: 'internal server error',
-  type: ApiExceptionTyping,
+  type: SinaiApiExceptionTyping,
 };
 
 export const SwaggerResponse = {

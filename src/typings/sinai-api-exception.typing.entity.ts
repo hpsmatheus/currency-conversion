@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
-export default class ApiExceptionTyping {
+export default class SinaiApiExceptionTyping {
   statusCode: HttpStatus;
 
   errorCode: string;

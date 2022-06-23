@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import ApiExceptionTyping from '../../typings/api-exception.typing.entity';
+import SinaiApiExceptionTyping from '../../typings/sinai-api-exception.typing.entity';
 import { EErrorCode } from './error-code.enum';
 
-export default class ApiException extends HttpException {
-  constructor(error: ApiExceptionTyping) {
+export default class SinaiApiException extends HttpException {
+  constructor(error: SinaiApiExceptionTyping) {
     super(error, error.statusCode);
   }
 
-  static inputValidation(data?: unknown | never): ApiException {
-    return new ApiException({
+  static inputValidation(data?: unknown | never): SinaiApiException {
+    return new SinaiApiException({
       errorCode: EErrorCode.INPUT_VALIDATION_ERROR,
       statusCode: HttpStatus.BAD_REQUEST,
       message: 'errors occurred during input validation',
@@ -16,8 +16,8 @@ export default class ApiException extends HttpException {
     });
   }
 
-  public static parseError(error: any): ApiException {
-    return new ApiException({
+  public static parseError(error: any): SinaiApiException {
+    return new SinaiApiException({
       statusCode: this.getStatusCodeFrom(error),
       errorCode: EErrorCode.INTERNAL_SERVER_ERROR,
       message: this.getMessageFrom(error),
