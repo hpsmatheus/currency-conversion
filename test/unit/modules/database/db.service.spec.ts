@@ -8,7 +8,9 @@ const mockPool = {
 jest.mock('pg', () => {
   return { Pool: jest.fn(() => mockPool) };
 });
+
 const dbService = new DbService();
+
 describe('DbService', () => {
   it('should return the rows of a query result', async () => {
     mockPool.query.mockResolvedValueOnce({ rows: [Constants.anyObject] });
