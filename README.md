@@ -1,47 +1,108 @@
-s
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Sinai Backend Challenge API
 
-## Installation
+Tech Stack: [Node.js](https://nodejs.org/en/docs/), [Typescript](https://www.typescriptlang.org/docs/), [Nest.js](https://docs.nestjs.com/), [PostgreSQL](https://www.postgresql.org/docs/), [TypeORM](https://typeorm.io/#/)
 
+## Requirements
+
+* Node v16.13.2 or higher
+* Docker and docker compose
+
+
+## Run Application Locally
+
+```bash
+$ git clone
+```
 ```bash
 $ npm install
 ```
-
-## Running the app
-
 ```bash
-# development
-$ npm run start
+$ docker compose up 
+this will start postgres and adminer on local containers
+adminer is lighwheight DBMS that runs on browser
+```
+```bash
+-> access adminer on your localhost:8080
 
-# watch mode
-$ npm run start:dev
+* server: db
+* username: pgsql
+* password: pgsql
+* leave the database field empty
+(you may change these values on docker-compose.yml following your preferences)
 
-# production mode
-$ npm run start:prod
+-> create a database with the name of your preference and leave it empty 
 ```
 
-## Test
+```bash
+-> create a .env file on project root following .env.example model and fill
+the placeholders with the same values above
+```
+```bash
+$ node src/scripts/create-schema.js
+this will create the database schema
+```
+
+```bash
+-> paste a file named "data.csv" (with all data you want to load into the database) 
+inside the folder src/scripts/load-db-data-from-csv and then run
+
+$  node src/scripts/load-db-data-from-csv/load-db-data-from-csv.js
+
+this will load all your data into the database
+```
+```bash
+$ npm run start:dev
+```
+## API Docs
+[Swagger] http://localhost:300/api-docs
+
+
+## Tests
 
 ```bash
 # unit tests
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
-
 # test coverage
 $ npm run test:cov
 ```
 
-## Support
+## Linter and formatting
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# find problems
+$ npm run lint
 
-## Stay in touch
+# find and fix problems automatically
+$ npm run lint:fix
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# format code
+$ npm run format
+```
+## Folder Structure
 
+```
+> src
+  > core                            (files that are used all over the API)
+     > error                        (files to do the error handling and format API errors)
+     > request-interceptor          (Nest.js interceptor to catch errors and do API logging)
+     > sinai-api-validation.pipe.ts (Nest.js pipe to validate DTOs)
+     > swagger-response.ts          (abstraction to add and reuse swagger responses)
+  
+  > modules
+    > business-entity   (module, controller and service to perform operations on business entity)
+    > database          (module and service to perform operations on database using pg lib)
+    
+  > querys              (contains all the SQL that can be executed on this API, used on modules)
+  > scripts             (scripts to create schema and load data into the database)
+  > typings             (contains all the API typings)
+  
+  > test
+    > integration      (integration tests mocking the database)
+    > mocks            (mocks used all over the tests using builder pattern)
+    > unit             (unit tests)
+    
+  
+  
+```
