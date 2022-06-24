@@ -25,15 +25,4 @@ ENV NODE_ENV=development
 
 CMD ["npm", "run", "start:dev"]
 
-# PRODUCTION STAGE
-FROM builder as production
-
-ENV NODE_ENV=production
-
-COPY --chown=node ./scripts/env.sh ./env.sh
-RUN ["chmod", "+x", "/sanar/env.sh"]
-
-RUN npm prune --production
-
-CMD ["/bin/sh", "-c", "source /sanar/env.sh && npm run start:prod"]
 
