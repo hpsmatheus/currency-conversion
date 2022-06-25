@@ -4,7 +4,6 @@
 Tech Stack: [Node.js](https://nodejs.org/en/docs/), [Typescript](https://www.typescriptlang.org/docs/), [Nest.js](https://docs.nestjs.com/), [PostgreSQL](https://www.postgresql.org/docs/)
 
 ## Requirements
-
 * Node v16.13.2 or higher
 * Docker and docker compose
 
