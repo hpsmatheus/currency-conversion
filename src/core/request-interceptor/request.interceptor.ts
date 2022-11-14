@@ -38,9 +38,7 @@ export default class RequestInterceptor implements NestInterceptor {
 
   private handleErrorOnRequest(error: unknown): ApiException {
     const exception =
-      error instanceof ApiException
-        ? error
-        : ApiException.parseError(error);
+      error instanceof ApiException ? error : ApiException.parseError(error);
     this.logger.reqError(exception);
     return exception;
   }
