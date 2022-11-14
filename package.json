@@ -1,10 +1,10 @@
 {
-  "name": "sinai-api",
+  "name": "nestjs-boilerplate",
   "engines": {
     "node": ">=16.13.2"
   },
   "version": "0.0.1",
-  "description": "sinai tech backend exercise",
+  "description": "tech backend exercise",
   "author": "Matheus Santos | hpsmatheus",
   "private": false,
   "license": "UNLICENSED",

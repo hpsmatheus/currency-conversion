@@ -4,7 +4,7 @@ import { catchError } from 'rxjs/operators';
 
 import RequestLogger from './logger';
 import RequestContextBuilder from './request-context.builder';
-import SinaiApiException from '../error/sinai-api-exception';
+import ApiException from '../error/api-exception';
 
 export default class RequestInterceptor implements NestInterceptor {
   private logger: RequestLogger;
@@ -36,11 +36,11 @@ export default class RequestInterceptor implements NestInterceptor {
     this.logger.reqEnd();
   }
 
-  private handleErrorOnRequest(error: unknown): SinaiApiException {
+  private handleErrorOnRequest(error: unknown): ApiException {
     const exception =
-      error instanceof SinaiApiException
+      error instanceof ApiException
         ? error
-        : SinaiApiException.parseError(error);
+        : ApiException.parseError(error);
     this.logger.reqError(exception);
     return exception;
   }

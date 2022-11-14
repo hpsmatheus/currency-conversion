@@ -2,7 +2,7 @@ import RequestLogger from '../../../../src/core/request-interceptor/logger';
 import RequestContext from '../../../../src/typings/request-context';
 import { Logger } from '@nestjs/common';
 import { formatISO } from 'date-fns';
-import SinaiApiException from '../../../../src/core/error/sinai-api-exception';
+import ApiException from '../../../../src/core/error/api-exception';
 import MockRequestContextBuilder from '../../../mocks/core/mock-request-context.builder';
 
 describe('Request logger', () => {
@@ -41,7 +41,7 @@ describe('Request logger', () => {
   });
 
   it('should log req info when finishing with error', () => {
-    const exception = SinaiApiException.inputValidation();
+    const exception = ApiException.inputValidation();
     const formattedError = JSON.stringify(exception.getResponse());
 
     requestLogger.reqError(exception);

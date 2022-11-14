@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { formatISO } from 'date-fns';
 import RequestContext from '../../typings/request-context';
-import SinaiApiException from '../error/sinai-api-exception';
+import ApiException from '../error/api-exception';
 
 export default class RequestLogger extends Logger {
   constructor(private readonly reqContext: RequestContext) {
@@ -21,7 +21,7 @@ export default class RequestLogger extends Logger {
     this.log(log);
   }
 
-  public reqError(error: SinaiApiException): void {
+  public reqError(error: ApiException): void {
     const requestDuration = Date.now() - this.reqContext.startTime;
     const formattedError = JSON.stringify(error.getResponse());
     const log = `[${this.reqContext.trackId}] Request took ${requestDuration} ms | Error: ${formattedError}`;

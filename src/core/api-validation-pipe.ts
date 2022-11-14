@@ -1,7 +1,7 @@
 import { ValidationError, ValidationPipe } from '@nestjs/common';
-import SinaiApiException from './error/sinai-api-exception';
+import ApiException from './error/api-exception';
 
-export default class SinaiApiValidationPipe extends ValidationPipe {
+export default class ApiValidationPipe extends ValidationPipe {
   constructor() {
     super({
       whitelist: true,
@@ -9,7 +9,7 @@ export default class SinaiApiValidationPipe extends ValidationPipe {
         const errors = validationErrors.map((error) =>
           Object.values(error.constraints).reduce((value) => value),
         );
-        throw SinaiApiException.inputValidation({ errors });
+        throw ApiException.inputValidation({ errors });
       },
     });
   }
