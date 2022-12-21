@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    container_name: 'db'
+    restart: always
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pgsql
+      POSTGRES_PASSWORD: pgsql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+
+
+volumes:
+  pg-data:
