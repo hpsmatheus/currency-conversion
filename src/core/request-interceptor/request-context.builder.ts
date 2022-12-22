@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import RequestContext from '../../typings/request-context';
+import RequestContext from '../../typings/core/request-context';
 
 export default class RequestContextBuilder {
   constructor(private readonly context: ExecutionContext) {}

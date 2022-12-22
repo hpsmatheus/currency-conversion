@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { HttpStatus, Type } from '@nestjs/common';
 import { ApiResponseOptions } from '@nestjs/swagger';
-import ApiExceptionTyping from '../typings/api-exception.typing.entity';
+import ApiExceptionTyping from '../typings/core/api-exception.typing.entity';
 
 function ok(
   type?: Type<unknown> | Function | [Function] | string,

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { formatISO } from 'date-fns';
-import RequestContext from '../../typings/request-context';
+import RequestContext from '../../typings/core/request-context';
 import ApiException from '../error/api-exception';
 
 export default class RequestLogger extends Logger {

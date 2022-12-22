@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import ApiExceptionTyping from '../../typings/api-exception.typing.entity';
+import ApiExceptionTyping from '../../typings/core/api-exception.typing.entity';
 import { EErrorCode } from './error-code.enum';
 
 export default class ApiException extends HttpException {
@@ -7,11 +7,14 @@ export default class ApiException extends HttpException {
     super(error, error.statusCode);
   }
 
-  static inputValidation(data?: unknown | never): ApiException {
+  static inputValidation(
+    data?: unknown | never,
+    message?: string,
+  ): ApiException {
     return new ApiException({
       errorCode: EErrorCode.INPUT_VALIDATION_ERROR,
       statusCode: HttpStatus.BAD_REQUEST,
-      message: 'errors occurred during input validation',
+      message: message ?? 'errors occurred during input validation',
       data: data ?? {},
     });
   }

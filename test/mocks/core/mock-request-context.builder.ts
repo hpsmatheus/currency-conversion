@@ -1,4 +1,4 @@
-import RequestContext from '../../../src/typings/request-context';
+import RequestContext from '../../../src/typings/core/request-context';
 import Constants from '../../constants';
 
 export default class MockRequestContextBuilder {
