@@ -6,6 +6,8 @@ import CurrencyConversionResponse from 'src/typings/currency-conversion/currency
 import { Currency, ECurrencyType } from 'src/typings/currency/currency.entity';
 import CurrencyService from '../currency/currency.service';
 
+type Currencies = { originCurrency: Currency; destinationCurrency: Currency };
+
 @Injectable()
 export default class CurrencyConversionService {
   constructor(
@@ -17,103 +19,50 @@ export default class CurrencyConversionService {
     params: CurrencyConversionParams,
   ): Promise<CurrencyConversionResponse> {
     const { from, to, amount } = params;
-    const currencies = await this.getCurrencies(from, to);
-
-    const originaryCurrency = currencies.find(
-      (currency) => currency.symbol === from,
-    );
-
-    const destinationCurrency = currencies.find(
-      (currency) => currency.symbol === to,
+    const { originCurrency, destinationCurrency } = await this.getCurrencies(
+      from,
+      to,
     );
 
     if (
-      originaryCurrency.type !== ECurrencyType.FICTIOUS &&
+      originCurrency.type !== ECurrencyType.FICTIOUS &&
       destinationCurrency.type !== ECurrencyType.FICTIOUS
     ) {
-      const conversionResult = await this.conversionClient.convert(from, [to]);
-      const quotation = Object.values(conversionResult.quotation)[0];
-      return {
-        ...conversionResult,
-        conversion: this.formatMoney(quotation * amount),
-      };
+      return this.convertNonFictious(
+        originCurrency,
+        destinationCurrency,
+        amount,
+      );
     }
 
     if (
-      originaryCurrency.type === ECurrencyType.FICTIOUS &&
+      originCurrency.type === ECurrencyType.FICTIOUS &&
       destinationCurrency.type !== ECurrencyType.FICTIOUS
     ) {
-      if (!originaryCurrency.usdQuotation) {
-        throw ApiException.inputValidation(
-          null,
-          `Could not find any quotation to ${from}`,
-        );
-      }
-      const conversionResult = await this.conversionClient.convert(to, ['USD']);
-      const quotation =
-        Object.values(conversionResult.quotation)[0] *
-        originaryCurrency.usdQuotation;
-      return {
-        estimatedUpdate: originaryCurrency.updatedAt,
-        quotation: JSON.parse(`{"${to}": ${quotation}}`),
-        conversion: this.formatMoney(quotation * amount),
-      };
+      return this.convertFictiousToNonFictious(
+        originCurrency,
+        destinationCurrency,
+        amount,
+      );
     }
 
     if (
-      originaryCurrency.type !== ECurrencyType.FICTIOUS &&
+      originCurrency.type !== ECurrencyType.FICTIOUS &&
       destinationCurrency.type === ECurrencyType.FICTIOUS
     ) {
-      if (!destinationCurrency.usdQuotation) {
-        throw ApiException.inputValidation(
-          null,
-          `Could not find any quotation to ${to}`,
-        );
-      }
-      const conversionResult = await this.conversionClient.convert(from, [
-        'USD',
-      ]);
-      const quotation =
-        Object.values(conversionResult.quotation)[0] *
-        destinationCurrency.usdQuotation;
-      return {
-        estimatedUpdate: destinationCurrency.updatedAt,
-        quotation: JSON.parse(`{"${to}": ${quotation}}`),
-        conversion: this.formatMoney(quotation * amount),
-      };
+      return this.convertNonFictiousToFictious(
+        originCurrency,
+        destinationCurrency,
+        amount,
+      );
     } else {
-      if (!originaryCurrency.usdQuotation) {
-        throw ApiException.inputValidation(
-          null,
-          `Could not find any quotation to ${to}`,
-        );
-      }
-
-      if (!destinationCurrency.usdQuotation) {
-        throw ApiException.inputValidation(
-          null,
-          `Could not find any quotation to ${from}`,
-        );
-      }
-
-      const quotation =
-        originaryCurrency.usdQuotation * destinationCurrency.usdQuotation;
-
-      return {
-        estimatedUpdate: destinationCurrency.updatedAt, //take the lower date
-        quotation: JSON.parse(`{"${to}": ${quotation}}`),
-        conversion: this.formatMoney(quotation * amount),
-      };
+      return this.convertFictious(originCurrency, destinationCurrency, amount);
     }
   }
 
-  private formatMoney(value: number): number {
-    const decimalPlaces = 2;
-    return Number(value.toFixed(decimalPlaces));
-  }
-
-  private async getCurrencies(from: string, to: string): Promise<Currency[]> {
+  private async getCurrencies(from: string, to: string): Promise<Currencies> {
     const currencies = await this.currencyService.findAllBySymbol([from, to]);
+
     if (currencies.length !== 2)
       throw ApiException.notFound(
         null,
@@ -122,6 +71,117 @@ export default class CurrencyConversionService {
           .join(',')}`,
       );
 
-    return currencies;
+    const originCurrency = currencies.find(
+      (currency) => currency.symbol === from,
+    );
+
+    const destinationCurrency = currencies.find(
+      (currency) => currency.symbol === to,
+    );
+
+    return { originCurrency, destinationCurrency };
+  }
+
+  private async convertNonFictious(
+    originCurrency: Currency,
+    destinationCurrency: Currency,
+    amount: number,
+  ): Promise<CurrencyConversionResponse> {
+    const conversionResult = await this.conversionClient.convert(
+      originCurrency.symbol,
+      [destinationCurrency.symbol],
+    );
+
+    const quotation = Object.values(conversionResult.quotation)[0];
+
+    return {
+      ...conversionResult,
+      conversion: this.formatMoney(quotation * amount),
+    };
+  }
+
+  private async convertFictiousToNonFictious(
+    originCurrency: Currency,
+    destinationCurrency: Currency,
+    amount: number,
+  ): Promise<CurrencyConversionResponse> {
+    if (!originCurrency.quotationCurrencyToUSD) {
+      this.throwQuotationNotFound(originCurrency);
+    }
+
+    const conversionResult = await this.conversionClient.convert('USD', [
+      destinationCurrency.symbol,
+    ]);
+
+    const quotation =
+      Object.values(conversionResult.quotation)[0] *
+      originCurrency.quotationCurrencyToUSD;
+
+    return {
+      estimatedUpdate: originCurrency.updatedAt,
+      quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
+      conversion: this.formatMoney(quotation * amount),
+    };
+  }
+
+  private async convertNonFictiousToFictious(
+    originCurrency: Currency,
+    destinationCurrency: Currency,
+    amount: number,
+  ): Promise<CurrencyConversionResponse> {
+    if (!destinationCurrency.quotationUSDToCurrency) {
+      this.throwQuotationNotFound(destinationCurrency);
+    }
+
+    const conversionResult = await this.conversionClient.convert(
+      originCurrency.symbol,
+      ['USD'],
+    );
+
+    const quotation =
+      Object.values(conversionResult.quotation)[0] *
+      destinationCurrency.quotationUSDToCurrency;
+
+    return {
+      estimatedUpdate: destinationCurrency.updatedAt,
+      quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
+      conversion: this.formatMoney(quotation * amount),
+    };
+  }
+
+  private convertFictious(
+    originCurrency: Currency,
+    destinationCurrency: Currency,
+    amount: number,
+  ): CurrencyConversionResponse {
+    if (!originCurrency.quotationCurrencyToUSD) {
+      this.throwQuotationNotFound(originCurrency);
+    }
+
+    if (!destinationCurrency.quotationUSDToCurrency) {
+      this.throwQuotationNotFound(destinationCurrency);
+    }
+
+    const quotation =
+      originCurrency.quotationCurrencyToUSD *
+      destinationCurrency.quotationUSDToCurrency;
+
+    return {
+      estimatedUpdate: destinationCurrency.updatedAt,
+      quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
+      conversion: this.formatMoney(quotation * amount),
+    };
+  }
+
+  private formatMoney(value: number): number {
+    const decimalPlaces = 2;
+    return Number(value.toFixed(decimalPlaces));
+  }
+
+  private throwQuotationNotFound(currency: Currency): void {
+    throw ApiException.inputValidation(
+      null,
+      `Could not find any quotation to ${currency.symbol}`,
+    );
   }
 }

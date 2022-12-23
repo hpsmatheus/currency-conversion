@@ -10,7 +10,11 @@ export default class CreateCurrencyInput {
 
   @IsNumber()
   @IsOptional()
-  usdQuotation: number;
+  quotationUSDToCurrency?: number;
+
+  @IsNumber()
+  @IsOptional()
+  quotationCurrencyToUSD?: number;
 
   @IsEnum(ECurrencyType)
   type: ECurrencyType;

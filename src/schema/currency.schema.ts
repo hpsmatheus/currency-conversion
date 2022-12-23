@@ -4,7 +4,8 @@ export const CurrencySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     symbol: { type: String, required: true },
-    usdQuotation: { type: Number },
+    quotationUSDToCurrency: { type: Number },
+    quotationCurrencyToUSD: { type: Number },
     type: {
       type: String,
       enum: ['FIAT', 'CRYPTO', 'FICTIOUS'],

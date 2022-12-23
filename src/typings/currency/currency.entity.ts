@@ -8,7 +8,9 @@ export class Currency {
 
   symbol: string;
 
-  usdQuotation?: number;
+  quotationUSDToCurrency?: number;
+
+  quotationCurrencyToUSD?: number;
 
   createdAt: Date;
 
