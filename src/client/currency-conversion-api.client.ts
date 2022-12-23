@@ -16,7 +16,7 @@ export default class CurrencyConversionApiClient {
   public async convert(
     from: string,
     to: string[],
-  ): Promise<ClientCurrencyConversionResponse> {
+  ): Promise<ClientCurrencyConversionResponse | null> {
     const response = (await axios.get(`${this.url}/price`, {
       headers: { authorization: this.authorization },
       params: {
@@ -26,6 +26,11 @@ export default class CurrencyConversionApiClient {
     })) as {
       data: Record<string, number>;
     };
+
+    if (response.data.Response?.toString().includes('Error')) {
+      return null;
+    }
+
     return {
       quotation: response.data,
       estimatedUpdate: parseJSON(Date.now()),

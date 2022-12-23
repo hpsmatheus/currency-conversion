@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ECurrencyType } from './currency.entity';
 
 export default class CreateCurrencyInput {
   @IsString()
@@ -8,5 +9,9 @@ export default class CreateCurrencyInput {
   symbol: string;
 
   @IsNumber()
+  @IsOptional()
   usdQuotation: number;
+
+  @IsEnum(ECurrencyType)
+  type: ECurrencyType;
 }

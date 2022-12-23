@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import CreateCurrencyInput from 'src/typings/currency/create-currency.input.dto';
-import Currency from 'src/typings/currency/currency.entity';
+import { Currency } from 'src/typings/currency/currency.entity';
 import CurrencyService from './currency.service';
 
 @Controller('currency')

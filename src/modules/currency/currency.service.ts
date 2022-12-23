@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import ApiException from 'src/core/error/api-exception';
 import { CurrencyDocument } from 'src/schema/currency.schema';
 import CreateCurrencyInput from 'src/typings/currency/create-currency.input.dto';
-import Currency from 'src/typings/currency/currency.entity';
+import { Currency } from 'src/typings/currency/currency.entity';
 
 @Injectable()
 export default class CurrencyService {
@@ -19,16 +19,20 @@ export default class CurrencyService {
   }
 
   public async create(currencyInput: CreateCurrencyInput): Promise<Currency> {
-    const alreadyExists = await this.findBySymbol(currencyInput.symbol);
+    const alreadyExists = await this.findOneBySymbol(currencyInput.symbol);
     if (alreadyExists) {
       throw ApiException.inputValidation(null, 'Currency already exists');
     }
     return this.currencyModel.create(currencyInput);
   }
 
-  public async findBySymbol(symbol: string): Promise<Currency> {
+  public async findOneBySymbol(symbol: string): Promise<Currency> {
     return this.currencyModel.findOne({
       symbol,
     });
+  }
+
+  public async findAllBySymbol(symbols: string[]): Promise<Currency[]> {
+    return this.currencyModel.find({ symbol: { $in: symbols } });
   }
 }
