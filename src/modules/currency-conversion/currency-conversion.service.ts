@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import CurrencyConversionApiClient from 'src/client/currency-conversion-api.client';
+import DateUtil from 'src/core/date.util';
 import ApiException from 'src/core/error/api-exception';
 import CurrencyConversionParams from 'src/typings/currency-conversion/currency-conversion.params.dto';
 import CurrencyConversionResponse from 'src/typings/currency-conversion/currency-conversion.response.dto';
@@ -167,7 +168,10 @@ export default class CurrencyConversionService {
       destinationCurrency.quotationUSDToCurrency;
 
     return {
-      estimatedUpdate: destinationCurrency.updatedAt,
+      estimatedUpdate: DateUtil.min([
+        originCurrency.updatedAt,
+        destinationCurrency.updatedAt,
+      ]),
       quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
       conversion: this.formatMoney(quotation * amount),
     };
