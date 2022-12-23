@@ -14,6 +14,8 @@ export default class CurrencyConversionController {
 
   @Get()
   @ApiResponse(SwaggerResponse.Ok(CurrencyConversionResponse))
+  @ApiResponse(SwaggerResponse.InternalError)
+  @ApiResponse(SwaggerResponse.InputValidationError)
   public async convert(
     @Query() params: CurrencyConversionParams,
   ): Promise<CurrencyConversionResponse> {
