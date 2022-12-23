@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { parseJSON } from 'date-fns';
 import { Injectable } from '@nestjs/common';
 import ClientCurrencyConversionResponse from 'src/typings/client/client-currency-conversion.response.dto';
+import DateUtil from '../core/date.util';
 
 @Injectable()
 export default class CurrencyConversionApiClient {
@@ -33,7 +33,7 @@ export default class CurrencyConversionApiClient {
 
     return {
       quotation: response.data,
-      estimatedUpdate: parseJSON(Date.now()),
+      estimatedUpdate: DateUtil.now(),
     };
   }
 }
