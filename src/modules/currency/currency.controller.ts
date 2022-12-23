@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import CreateCurrencyInput from 'src/typings/currency/create-currency.input.dto';
 import { Currency } from 'src/typings/currency/currency.entity';
@@ -17,5 +17,10 @@ export default class CurrencyController {
   @Post()
   async create(@Body() currencyInput: CreateCurrencyInput): Promise<Currency> {
     return this.currencyService.create(currencyInput);
+  }
+
+  @Delete(':symbol')
+  public async delete(@Param('symbol') symbol: string): Promise<void> {
+    return this.currencyService.delete(symbol);
   }
 }

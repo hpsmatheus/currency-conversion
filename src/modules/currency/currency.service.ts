@@ -35,4 +35,8 @@ export default class CurrencyService {
   public async findAllBySymbol(symbols: string[]): Promise<Currency[]> {
     return this.currencyModel.find({ symbol: { $in: symbols } });
   }
+
+  public async delete(symbol: string): Promise<void> {
+    await this.currencyModel.deleteOne({ symbol });
+  }
 }
