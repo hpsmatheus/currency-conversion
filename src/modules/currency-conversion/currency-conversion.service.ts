@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import CurrencyConversionApiClient from 'src/client/currency-conversion-api.client';
-import DateUtil from 'src/core/date.util';
-import ApiException from 'src/core/error/api-exception';
+import CurrencyConversionApiClient from '../../client/currency-conversion-api.client';
+import DateUtil from '../../core/date.util';
+import ApiException from '../../core/error/api-exception';
 import CurrencyConversionParams from 'src/typings/currency-conversion/currency-conversion.params.dto';
 import CurrencyConversionResponse from 'src/typings/currency-conversion/currency-conversion.response.dto';
-import { Currency, ECurrencyType } from 'src/typings/currency/currency.entity';
+import {
+  Currency,
+  ECurrencyType,
+} from '../../typings/currency/currency.entity';
 import CurrencyService from '../currency/currency.service';
+import MoneyUtil from '../../../src/core/money.util';
 
 type Currencies = { originCurrency: Currency; destinationCurrency: Currency };
+
+const USDCurrency = 'USD';
 
 @Injectable()
 export default class CurrencyConversionService {
@@ -97,7 +103,7 @@ export default class CurrencyConversionService {
 
     return {
       ...conversionResult,
-      conversion: this.formatMoney(quotation * amount),
+      conversion: MoneyUtil.format(quotation * amount),
     };
   }
 
@@ -110,7 +116,7 @@ export default class CurrencyConversionService {
       this.throwQuotationNotFound(originCurrency);
     }
 
-    const conversionResult = await this.conversionClient.convert('USD', [
+    const conversionResult = await this.conversionClient.convert(USDCurrency, [
       destinationCurrency.symbol,
     ]);
 
@@ -121,7 +127,7 @@ export default class CurrencyConversionService {
     return {
       estimatedUpdate: originCurrency.updatedAt,
       quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
-      conversion: this.formatMoney(quotation * amount),
+      conversion: MoneyUtil.format(quotation * amount),
     };
   }
 
@@ -136,7 +142,7 @@ export default class CurrencyConversionService {
 
     const conversionResult = await this.conversionClient.convert(
       originCurrency.symbol,
-      ['USD'],
+      [USDCurrency],
     );
 
     const quotation =
@@ -146,7 +152,7 @@ export default class CurrencyConversionService {
     return {
       estimatedUpdate: destinationCurrency.updatedAt,
       quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
-      conversion: this.formatMoney(quotation * amount),
+      conversion: MoneyUtil.format(quotation * amount),
     };
   }
 
@@ -173,13 +179,8 @@ export default class CurrencyConversionService {
         destinationCurrency.updatedAt,
       ]),
       quotation: JSON.parse(`{"${destinationCurrency.symbol}": ${quotation}}`),
-      conversion: this.formatMoney(quotation * amount),
+      conversion: MoneyUtil.format(quotation * amount),
     };
-  }
-
-  private formatMoney(value: number): number {
-    const decimalPlaces = 2;
-    return Number(value.toFixed(decimalPlaces));
   }
 
   private throwQuotationNotFound(currency: Currency): void {

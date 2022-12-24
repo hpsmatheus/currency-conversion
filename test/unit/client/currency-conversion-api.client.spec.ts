@@ -13,13 +13,13 @@ describe('Currency Conversion Api Client', () => {
     process.env.CONVERSION_API_KEY = Constants.anyString;
     jest
       .spyOn(axios, 'get')
-      .mockResolvedValueOnce(externalApiConversionResponseMock());
+      .mockResolvedValueOnce(
+        externalApiConversionResponseMock(Constants.anyFiatCurrency),
+      );
   });
 
   const convert = (): Promise<ClientCurrencyConversionResponse | null> =>
-    client.convert(Constants.anyOriginCurrency, [
-      Constants.anyDestinationCurrency,
-    ]);
+    client.convert(Constants.anyCryptoCurrency, [Constants.anyFiatCurrency]);
 
   it('should call external API to execute conversion', async () => {
     const result = await convert();
@@ -28,7 +28,7 @@ describe('Currency Conversion Api Client', () => {
       ...result,
       estimatedUpdate: DateUtil.ignoreTime(result.estimatedUpdate),
     }).toStrictEqual({
-      ...clientCurrencyConversionResponse,
+      ...clientCurrencyConversionResponse(Constants.anyFiatCurrency),
       estimatedUpdate: DateUtil.ignoreTime(result.estimatedUpdate),
     });
 
@@ -37,8 +37,8 @@ describe('Currency Conversion Api Client', () => {
       {
         headers: { authorization: `Apikey ${Constants.anyString}` },
         params: {
-          fsym: Constants.anyOriginCurrency,
-          tsyms: Constants.anyDestinationCurrency,
+          fsym: Constants.anyCryptoCurrency,
+          tsyms: Constants.anyFiatCurrency,
         },
       },
     );

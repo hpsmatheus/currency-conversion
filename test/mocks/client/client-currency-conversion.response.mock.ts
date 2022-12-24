@@ -1,10 +1,11 @@
 import ClientCurrencyConversionResponse from '../../../src/typings/client/client-currency-conversion.response.dto';
 import Constants from '../../constants';
 
-export const clientCurrencyConversionResponse: ClientCurrencyConversionResponse =
-  {
+export const clientCurrencyConversionResponse = (
+  symbol: string = Constants.anyDestinationCurrency,
+): ClientCurrencyConversionResponse => {
+  return {
     estimatedUpdate: Constants.anyDate,
-    quotation: JSON.parse(
-      `{"${Constants.anyDestinationCurrency}": ${Constants.anyNumber}}`,
-    ),
+    quotation: JSON.parse(`{"${symbol}": ${Constants.anyQuotation}}`),
   };
+};

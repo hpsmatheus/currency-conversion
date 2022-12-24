@@ -1,9 +1,9 @@
 import Constants from '../../constants';
 
-export const externalApiConversionResponseMock = (): Record<string, number> => {
+export const externalApiConversionResponseMock = (
+  symbol: string = Constants.anyDestinationCurrency,
+): Record<string, number> => {
   return {
-    data: JSON.parse(
-      `{"${Constants.anyDestinationCurrency}": ${Constants.anyNumber}}`,
-    ),
+    data: JSON.parse(`{"${symbol}": ${Constants.anyQuotation}}`),
   };
 };
