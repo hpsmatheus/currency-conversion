@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SwaggerResponse } from 'src/core/swagger-response';
-import CurrencyConversionParams from 'src/typings/currency-conversion/currency-conversion.params.dto';
-import CurrencyConversionResponse from 'src/typings/currency-conversion/currency-conversion.response.dto';
+import { SwaggerResponse } from '../../core/swagger-response';
+import CurrencyConversionParams from '../../typings/currency-conversion/currency-conversion.params.dto';
+import CurrencyConversionResponse from '../../typings/currency-conversion/currency-conversion.response.dto';
 import CurrencyConversionService from './currency-conversion.service';
 
 @Controller('currency-conversion')

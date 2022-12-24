@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SwaggerResponse } from 'src/core/swagger-response';
-import CreateCurrencyInput from 'src/typings/currency/create-currency.input.dto';
-import { Currency } from 'src/typings/currency/currency.entity';
+import { SwaggerResponse } from '../../core/swagger-response';
+import CreateCurrencyInput from '../../typings/currency/create-currency.input.dto';
+import { Currency } from '../../typings/currency/currency.entity';
 import CurrencyService from './currency.service';
 
 @Controller('currency')

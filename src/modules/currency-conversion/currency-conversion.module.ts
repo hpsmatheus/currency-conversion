@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import CurrencyConversionApiClient from 'src/client/currency-conversion-api.client';
+import CurrencyConversionApiClient from '../../client/currency-conversion-api.client';
 import CurrencyModule from '../currency/currency.module';
 import CurrencyConversionController from './currency-conversion.controller';
 import CurrencyConversionService from './currency-conversion.service';
