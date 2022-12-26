@@ -6,7 +6,7 @@ import CurrencyConversionService from '../../../../src/modules/currency-conversi
 import CurrencyService from '../../../../src/modules/currency/currency.service';
 import CurrencyConversionParams from '../../../../src/typings/currency-conversion/currency-conversion.params.dto';
 import Constants from '../../../constants';
-import { currenciesMock } from '../../../mocks/currency.entity.mock';
+import { currenciesMock } from '../../../mocks/currency/currency.entity.mock';
 import { EErrorCode } from '../../../../src/core/error/error-code.enum';
 import { HttpStatus } from '@nestjs/common';
 import ApiException from '../../../../src/core/error/api-exception';

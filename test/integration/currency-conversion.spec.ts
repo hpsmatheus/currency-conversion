@@ -11,7 +11,7 @@ import { Currency } from '../../src/typings/currency/currency.entity';
 import supertest from 'supertest';
 import Constants from '../constants';
 import { externalApiConversionResponseMock } from '../mocks/client/external-api-conversion.response.mock';
-import { currenciesMock } from '../mocks/currency.entity.mock';
+import { currenciesMock } from '../mocks/currency/currency.entity.mock';
 import AppBuilder from '../mocks/core/app.builder';
 import { currencyConversionResponse } from '../mocks/currency-conversion/currency-conversion.response.mock';
 import CurrencyConversionResponse from '../../src/typings/currency-conversion/currency-conversion.response.dto';

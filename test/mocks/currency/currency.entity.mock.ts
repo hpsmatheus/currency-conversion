@@ -1,9 +1,9 @@
-import DateUtil from '../../src/core/date.util';
+import DateUtil from '../../../src/core/date.util';
 import {
   Currency,
   ECurrencyType,
-} from '../../src/typings/currency/currency.entity';
-import Constants from '../constants';
+} from '../../../src/typings/currency/currency.entity';
+import Constants from '../../constants';
 
 const fictious: Currency = {
   name: Constants.anyString,
