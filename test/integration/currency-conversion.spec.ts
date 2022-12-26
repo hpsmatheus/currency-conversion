@@ -16,6 +16,7 @@ import AppBuilder from '../mocks/core/app.builder';
 import { currencyConversionResponse } from '../mocks/currency-conversion/currency-conversion.response.mock';
 import CurrencyConversionResponse from '../../src/typings/currency-conversion/currency-conversion.response.dto';
 import DateUtil from '../../src/core/date.util';
+import { EErrorCode } from '../../src/core/error/error-code.enum';
 
 describe('Currency Conversion Integration Tests', () => {
   let app: INestApplication;
@@ -80,5 +81,39 @@ describe('Currency Conversion Integration Tests', () => {
         },
       },
     );
+  });
+
+  it('should return 400 to invalid payloads', async () => {
+    const result = await supertest(app.getHttpServer()).get(
+      '/currency-conversion',
+    );
+    expect(result.status).toBe(HttpStatus.BAD_REQUEST);
+    expect(result.body.statusCode).toBe(HttpStatus.BAD_REQUEST);
+    expect(result.body.errorCode).toBe(EErrorCode.INPUT_VALIDATION_ERROR);
+    expect(result.body.message).toStrictEqual(
+      'errors occurred during input validation',
+    );
+    expect(result.body.data).toStrictEqual({
+      errors: [
+        'from must be a string',
+        'to must be a string',
+        'amount must be a number conforming to the specified constraints',
+      ],
+    });
+  });
+
+  it('should return formatted error object when error happens', async () => {
+    modelMock.find.mockImplementation(() => {
+      throw new Error('generic error');
+    });
+    const result = await supertest(app.getHttpServer())
+      .get('/currency-conversion')
+      .query(params);
+
+    expect(result.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(result.body.statusCode).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(result.body.errorCode).toBe(EErrorCode.INTERNAL_SERVER_ERROR);
+    expect(result.body.message).toStrictEqual('generic error');
+    expect(result.body.data).toBeDefined();
   });
 });
