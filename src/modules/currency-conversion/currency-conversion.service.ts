@@ -9,7 +9,7 @@ import {
   ECurrencyType,
 } from '../../typings/currency/currency.entity';
 import CurrencyService from '../currency/currency.service';
-import MoneyUtil from '../../../src/core/money.util';
+import MoneyUtil from '../../core/money.util';
 
 type Currencies = { originCurrency: Currency; destinationCurrency: Currency };
 
