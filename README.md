@@ -67,6 +67,22 @@ $ npm run lint:fix
 $ npm run format
 ```
 
+## Architecture design
+
+1. The endpoints are organized following Nest.js standard structure of _Modules, Controllers and Services_. The entry point module is the `app.module` that imports the other needed modules to make the endpoints available. This structure wraps all the endpoint dependencies inside a module and applies the singleton design pattern when creating objects (done by nest.js in the background).
+
+2. The `src/core` folder contains shareable resources that are used throughout the application and are not related to a specific functional requirement.
+
+## Error handling and logging
+
+Errors are handled by a global nest interceptor created in `src/core/request-interceptor/request.interceptor.ts` and configured in `src/main.ts`. This interceptor catches any error thrown in the application and makes sure that is going to be returned in a standard format.
+
+This same interceptor is also responsible for logging operation start, end and error with relevant data.
+
+## Input validation
+
+All the input typings carry its own validations using [class-validator](https://www.npmjs.com/package/class-validator) decorators. The validations are triggered by a global nest.js validation pipe created in `src/core/api-validation-pipe.ts` and configured in `src/main`.
+
 ## Folder Structure
 
 The API design follows the basic Nest.js structure with modules, controllers and services. Clients are used to interact with external APIs. Nest.js interceptors are used to monitor the request flow, catch errors and log operations. Nest.js validation pipes are used to validate input to API endpoints.
